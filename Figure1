@@ -1,0 +1,366 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.patches import Patch
+
+
+#フォント設定
+plt.rcParams['font.family'] = 'Times New Roman' # font familyの設定
+#plt.rcParams['mathtext.fontset'] = 'stix' # math fontの設定
+plt.rcParams["font.size"] = 20 # 全体のフォントサイズが変更されます。
+#plt.rcParams['xtick.labelsize'] = 9 # 軸だけ変更されます。                    
+#plt.rcParams['ytick.labelsize'] = 24 # 軸だけ変更されます   
+
+#軸設定                                                                        
+plt.rcParams['xtick.direction'] = 'in' #x軸の目盛りの向き                      
+plt.rcParams['ytick.direction'] = 'in' #y軸の目盛りの向き                      
+#plt.rcParams['axes.grid'] = True # グリッドの作成
+
+
+#plt.rcParams['grid.linestyle']='--' #グリッドの線種
+plt.rcParams["xtick.minor.visible"] = True  #x軸補助目盛りの追
+#plt.rcParams["ytick.minor.visible"] = True  #y軸補助目盛りの追加
+plt.rcParams['xtick.top'] = True  #x軸の上部目盛り
+plt.rcParams['ytick.right'] = True  #y軸の右部目盛り
+
+
+#凡例設定                                                                      
+plt.rcParams["legend.fancybox"] = False  # 丸角OFF
+plt.rcParams["legend.framealpha"] = 1  # 透明度の指定、0で塗りつぶしなし
+plt.rcParams["legend.edgecolor"] = 'black'  # edgeの色を変更
+plt.rcParams["legend.markerscale"] = 5 #markerサイズの倍率 
+
+
+# CSV読み込み
+df = pd.read_excel("Result_fig1.xlsx")
+
+# 除外
+exclude_models = ['kobayashi2021LGMctl', 'Kobayashi2021all','CTL']
+df = df[~df['model'].isin(exclude_models)]
+
+# データ
+models = df['model']
+atm = df['atm']
+ocn = df['ocn']
+devi = df['devi']
+sstsss = df['TS']
+sst = df['sst']
+sss = df['sss']
+dicalk = df['DIC/ALK']
+org=df['org']
+caco3=df['caco3']
+gas=df['gas']
+fw=df['fw']
+avr=df['inv']
+
+# 位置をずらすための工夫
+#N = len(models)
+#indices = np.arange(N)  # モデルの位置
+bar_height = 0.4
+
+# 横棒の位置（1本だけなので index=0 に設定）
+index = np.array([0])
+fig, ax = plt.subplots(figsize=(10, 6))
+#fig.subplots_adjust(right=0.6)  # 右側に20%の余白を追加
+
+# 13番目のインデックス
+i = 13
+atm_val = atm[i]
+
+ax.barh(index- 3*bar_height, atm_val, color='red', label='atm', height=0.2)
+
+
+# 正負積み上げ用
+pos_base = np.zeros_like(ocn)
+neg_base = np.zeros_like(ocn)
+
+
+
+
+
+ocn_val = ocn[i]
+devi_val = devi[i]
+
+components1 = [
+    ('ocn', ocn_val, 'blue'),
+    ('devi', devi_val, 'lightgray'),
+    ]
+
+for  label, data, color in components1:
+
+    bar_data = np.where(data >= 0, data, 0)  # 正の値
+    bar_left = pos_base
+    ax.barh(index- 2*bar_height, bar_data, left=bar_left,  color=color, label=label, height=0.2) #height=bar_height
+    pos_base += bar_data  # 正方向に積み上げ
+
+    bar_data = np.where(data < 0, data, 0)  # 負の値
+    bar_left = neg_base
+    ax.barh(index- 2*bar_height,bar_data, left=bar_left, color=color, height=0.2) #height=bar_height
+    neg_base += bar_data  # 負方向に積み上げ
+
+
+
+# 正負積み上げ用
+pos_base = np.zeros_like(dicalk)
+neg_base = np.zeros_like(dicalk)
+
+
+dicalk_val = dicalk[i]
+sstsss_val = sstsss[i]
+sst_val = sst[i]
+sss_val = sss[i]
+## DIC/ALK,SST/SSSの描画
+
+components2 = [
+    ('dic/alk', dicalk_val, 'lightcoral'),
+    ('sst', sst_val, 'lightgreen'),
+    ('sss', sss_val, 'mediumslateblue'),
+]
+
+
+for  label, data, color in components2:
+
+    bar_data = np.where(data >= 0, data, 0)  # 正の値
+    bar_left = pos_base
+    ax.barh(index- bar_height, bar_data, left=bar_left,  color=color, label=label, height=0.2) #height=bar_height
+    pos_base += bar_data  # 正方向に積み上げ
+
+    bar_data = np.where(data < 0, data, 0)  # 負の値
+    bar_left = neg_base
+    ax.barh(index- bar_height,bar_data, left=bar_left, color=color,  height=0.2) #height=bar_height
+    neg_base += bar_data  # 負方向に積み上げ
+
+
+# 初期化
+pos_base = np.zeros_like(org)  # 正方向の積み上げ位置
+neg_base = np.zeros_like(org)  # 負方向の積み上げ位置
+
+
+# 13番目のインデックス
+i = 13
+
+# 13番目の値だけを抽出
+org_val   = org[i]
+caco3_val = caco3[i]
+gas_val   = gas[i]
+fw_val    = fw[i]
+avr_val   = avr[i]
+
+
+
+# 順番と色
+components3 = [
+    ('org', org_val, (246/255, 170/255, 0)),
+    ('caco3', caco3_val, (3/255, 175/255, 122/255)),
+    ('gas',gas_val, (153/255, 0, 153/255)),
+    ('fw', fw_val, (77/255, 196/255, 255/255)),
+    ('inv', avr_val, (255/255, 241/255, 0))
+]
+
+# 積み上げ描画
+for label, val, color in components3:
+    print(label, val, type(val))
+    if val >= 0:
+        ax.barh(index, val, left=pos_base, color=color, label=label, height=0.2)
+        pos_base += val
+    else:
+        ax.barh(index, val, left=neg_base, color=color, label=label, height=0.2)
+        neg_base += val
+
+
+##点線を引く
+ax.plot(
+    [atm_val, ocn_val+devi_val],
+    [index-bar_height,index-bar_height ],
+    color="gray", linestyle="--", linewidth=1.5
+)
+
+ax.plot(
+    [ocn_val+devi_val, atm_val],
+    [index-0.9, index-1.1],
+    color="gray", linestyle="--", linewidth=1.5
+)
+
+ax.plot(
+    [dicalk_val+sst_val+sss_val, ocn_val],
+    [index-0.5, index-0.7],
+    color="gray", linestyle="--", linewidth=1.5
+)
+
+
+ax.plot(
+    [org_val+fw_val, dicalk_val],
+    [index-0.1, index-0.3],
+    color="gray", linestyle="--", linewidth=1.5
+)
+
+ax.plot(
+    [caco3_val+gas_val+avr_val, 0],
+    [index-0.1, index-0.3],
+    color="gray", linestyle="--", linewidth=1.5
+)
+
+# 軸ラベル設定
+com4_pos = 0
+com1_pos = com4_pos - 3*bar_height
+com2_pos = com4_pos - 2*bar_height
+com3_pos = com4_pos - bar_height
+
+#エラーバーをつける
+
+exclude_models2 = ['CTL','average']
+df2 = df[~df['model'].isin(exclude_models2)]
+models = df2['model']
+
+atm2 = df2['atm']
+ocn2 = df2['ocn']
+devi2= df2['devi']
+dicalk2 = df2['DIC/ALK']
+sstsss2 = df2['TS']
+sst2 = df2['sst']
+sss2 = df2['sss']
+org2=df2['org']
+caco32=df2['caco3']
+gas2=df2['gas']
+fw2=df2['fw']
+avr2=df2['inv']
+
+
+atmstds= atm2.std()
+ocnstds= ocn2.std()
+devistds=devi2.std()
+CAstds=dicalk2.std()
+TSstds=sstsss2.std()
+Tstds=sst2.std()
+Sstds=sss2.std()
+orgstds=org2.std()
+caco3stds=caco32.std()
+gasstds=gas2.std()
+fwstds=fw2.std()
+avrstds=avr2.std()
+
+
+ax.errorbar(x=atm_val, y=index- 3*bar_height, xerr=atmstds, fmt='none', color='pink', elinewidth=1.5, capsize=5, zorder=5)
+
+ax.errorbar(x=ocn_val, y=index- 2.1*bar_height, xerr=ocnstds, fmt='none', color='skyblue', elinewidth=1.5, capsize=5, zorder=5)
+
+ax.errorbar(x=ocn_val+devi_val, y=index- 1.9*bar_height, xerr=devistds, fmt='none', color='dimgray', elinewidth=1.5, capsize=5, zorder=5)
+
+ax.errorbar(x=dicalk_val, y=index-bar_height, xerr=CAstds, fmt='none', color='orangered', elinewidth=1.5, capsize=5, zorder=5)
+
+ax.errorbar(x=dicalk_val+sst_val, y=index-0.9*bar_height, xerr=Tstds, fmt='none', color='darkgreen', elinewidth=1.5, capsize=5, zorder=5)
+
+ax.errorbar(x=dicalk_val+sst_val+sss_val, y=index-1.1*bar_height, xerr=Sstds, fmt='none', color='blue', elinewidth=1.5, capsize=5, zorder=5)
+
+ax.errorbar(x=org_val, y=index-0.1*bar_height, xerr=orgstds, fmt='none', color='orangered', elinewidth=1.5, capsize=5, zorder=5)
+
+ax.errorbar(x=org_val+fw_val, y=index+0.1*bar_height, xerr=fwstds, fmt='none', color='steelblue', elinewidth=1.5, capsize=5, zorder=5)
+
+ax.errorbar(x=caco3_val, y=index-0.1*bar_height, xerr=caco3stds, fmt='none', color='darkgreen', elinewidth=1.5, capsize=5, zorder=5)
+
+ax.errorbar(x=gas_val+caco3_val, y=index, xerr=gasstds, fmt='none', color='indigo', elinewidth=1.5, capsize=5, zorder=5)
+
+ax.errorbar(x=gas_val+caco3_val+avr_val, y=index+0.1*bar_height, xerr=avrstds, fmt='none', color='orange', elinewidth=1.5, capsize=5, zorder=5)
+
+ax.set_yticks([com4_pos, com3_pos, com2_pos, com1_pos])
+#ax.set_yticks([com4_pos, com3_pos])
+
+#ax.set_yticks(range(4))
+ax.set_yticklabels(['carbon pumps', 'dic/alk ,sst,sss', 'ocn & devi' ,'atm'], fontsize=20)
+ax.invert_yaxis()
+#ax.set_yticklabels(['pumps', 'C/A & T/S'],fontsize=15)
+ax.set_xlim(40, -50)
+#ax.set_title(r"Multi model mean $\mathrm{ΔpCO_{2}}$ change (ppmv)")
+ax.set_title(r"Multi-model mean change in the partial pressure of CO$_2$ (ppmv)")
+#ax.set_title("mean pCO\u2082", fontsize=15)
+ax.axvline(0, color='black', linewidth=1.5, linestyle='--')
+
+
+#凡例
+# --- 凡例用のパッチ（色はプロットと合わせる） ---
+patch_atm   = Patch(facecolor='red',            label='atm    ')
+patch_ocn   = Patch(facecolor='blue',           label='ocn    ')
+patch_devi  = Patch(facecolor='lightgray',      label='devi   ')
+
+patch_dicalk = Patch(facecolor='lightcoral',    label='dic/alk')
+patch_sst    = Patch(facecolor='lightgreen',    label='sst    ')
+patch_sss    = Patch(facecolor='mediumslateblue', label='sss  ')
+
+patch_org   = Patch(facecolor=(246/255, 170/255, 0),         label='org')
+patch_caco3 = Patch(facecolor=(3/255, 175/255, 122/255),     label='caco3')
+patch_gas   = Patch(facecolor=(153/255, 0, 153/255),         label='gas')
+patch_fw    = Patch(facecolor=(77/255, 196/255, 255/255),    label='fw')
+patch_inv   = Patch(facecolor=(255/255, 241/255, 0),         label='inv')
+
+# atm（1つだけ）
+leg1 = ax.legend(
+    handles=[patch_atm],
+    #title="atm",
+    #loc='upper center',
+    bbox_to_anchor=(0.25, 0.975),
+    ncol=1,
+    fontsize=18,
+    title_fontsize=16,
+    #frameon=False
+#    handlelength=0.5,   # ← 横幅を短くする                                    
+#    handleheight=1.0,   # ← 縦幅のバランス調整（必要なら）  
+)
+ax.add_artist(leg1)  # 後で別の凡例も置きたいので add_artist
+
+# ocn & devi
+leg2 = ax.legend(
+    handles=[patch_ocn, patch_devi],
+    #title="ocn & devi",
+    #loc='upper center',
+    bbox_to_anchor=(0.25, 0.76),
+    ncol=1,
+    fontsize=18,
+    title_fontsize=16,
+    #frameon=False
+#    handlelength=0.5,
+#    handleheight=1.0,
+)
+ax.add_artist(leg2)
+
+# dic/alk, sst, sss
+leg3 = ax.legend(
+    handles=[patch_dicalk, patch_sst, patch_sss],
+    #title="dic/alk, sst, sss",
+    #loc='upper center',
+    bbox_to_anchor=(0.26, 0.52),
+    ncol=1,
+    fontsize=18,
+    title_fontsize=16,
+    #frameon=False
+#    handlelength=0.5,
+#    handleheight=1.0,
+)
+ax.add_artist(leg3)
+
+# carbon pumps
+leg4 = ax.legend(
+    handles=[patch_org, patch_caco3, patch_gas, patch_fw, patch_inv],
+    #title="carbon pumps",
+    #loc='upper center',
+    bbox_to_anchor=(0.75, 0.30),
+    ncol=2,
+    fontsize=18,
+    title_fontsize=16,
+    columnspacing=0.3,
+    #frameon=False
+#    handlelength=0.5,
+#    handleheight=1.0,
+)
+# 最後の legend は add_artist しなくて OK（してもよい）
+
+
+
+
+
+
+
+
+
+
+plt.savefig("fig1.png",bbox_inches='tight', dpi=600)
+plt.show()
