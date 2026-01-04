@@ -5,42 +5,27 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
 
 
-
-#フォント設定
-plt.rcParams['font.family'] = 'Times New Roman' # font familyの設定
-#plt.rcParams['mathtext.fontset'] = 'stix' # math fontの設定
-plt.rcParams["font.size"] = 15 # 全体のフォントサイズが変更されます。
-#plt.rcParams['xtick.labelsize'] = 9 # 軸だけ変更されます。
-#plt.rcParams['ytick.labelsize'] = 24 # 軸だけ変更されます
+plt.rcParams['font.family'] = 'Times New Roman'
+#plt.rcParams['mathtext.fontset'] = 'stix' 
+plt.rcParams["font.size"] = 15 
+#plt.rcParams['xtick.labelsize'] = 9 
+#plt.rcParams['ytick.labelsize'] = 24 
 
 
-#軸設定
-plt.rcParams['xtick.direction'] = 'in' #x軸の目盛りの向き
-plt.rcParams['ytick.direction'] = 'in' #y軸の目盛りの向き
-#plt.rcParams['axes.grid'] = True # グリッドの作成
-#plt.rcParams['grid.linestyle']='--' #グリッドの線種
-plt.rcParams["xtick.minor.visible"] = True  #x軸補助目盛りの追加
-#plt.rcParams["ytick.minor.visible"] = True  #y軸補助目盛りの追加
-plt.rcParams['xtick.top'] = True  #x軸の上部目盛り
-plt.rcParams['ytick.right'] = True  #y軸の右部目盛り
+plt.rcParams['xtick.direction'] = 'in' 
+plt.rcParams['ytick.direction'] = 'in' 
+#plt.rcParams['axes.grid'] = True 
+#plt.rcParams['grid.linestyle']='--' 
+plt.rcParams["xtick.minor.visible"] = True  
+#plt.rcParams["ytick.minor.visible"] = True  
+plt.rcParams['xtick.top'] = True  
+plt.rcParams['ytick.right'] = True  
 
 
-#軸大きさ
-#plt.rcParams["xtick.major.width"] = 1.0             #x軸主目盛り線の線幅
-#plt.rcParams["ytick.major.width"] = 1.0             #y軸主目盛り線の線幅
-#plt.rcParams["xtick.minor.width"] = 1.0             #x軸補助目盛り線の線幅
-#plt.rcParams["ytick.minor.width"] = 1.0             #y軸補助目盛り線の線幅
-#plt.rcParams["xtick.major.size"] = 10               #x軸主目盛り線の長さ
-#plt.rcParams["ytick.major.size"] = 10               #y軸主目盛り線の長さ
-#plt.rcParams["xtick.minor.size"] = 5                #x軸補助目盛り線の長さ
-#plt.rcParams["ytick.minor.size"] = 5                #y軸補助目盛り線の長さ
-#plt.rcParams["axes.linewidth"] = 1.0                #囲みの太さ
-
-#凡例設定
-plt.rcParams["legend.fancybox"] = False  # 丸角OFF
-plt.rcParams["legend.framealpha"] = 1  # 透明度の指定、0で塗りつぶしなし
-plt.rcParams["legend.edgecolor"] = 'black'  # edgeの色を変更
-plt.rcParams["legend.markerscale"] = 5 #markerサイズの倍率
+plt.rcParams["legend.fancybox"] = False  
+plt.rcParams["legend.framealpha"] = 1 
+plt.rcParams["legend.edgecolor"] = 'black'  
+plt.rcParams["legend.markerscale"] = 5 
 
 
 #=====================
@@ -126,55 +111,34 @@ invstds=avr2.std()
 
 
 N = len(model1)
-# y の位置（バーの中心の位置）
 indices = np.arange(len(model1))
 bar_height = 0.4
 
 
 
-
-
-
-
-
-
-
 #=====================
-#(a) の描画
-#=====================
-
-#ax1.barh(model1, atm1, color=rgb(255, 75, 0), height=0.6 )
-#ax1.barh(model1[13], atm1[13], xerr=atmstds, color=rgb(255, 75, 0), height=0.6, capsize=5)
-
-#ax1.invert_yaxis()  # 上から下に並べる
-#ax1.axvline(0, color='black', linewidth=1.5, linestyle='--')
-#ax1.set_yticks(indices)
-#ax1.set_yticklabels(model1)
-
-
-#=====================
-#(b) の描画
+#(b)
 #=====================
 
 
-# 棒グラフ（atm：上側）
+#（atm）
 ax2.barh(indices, atm1, height=bar_height, label='atm', color=rgb(255, 75, 0))
 
-# 棒グラフ（ocn：下側）
+# （ocn）
 ax2.barh(indices + bar_height, ocn1, height=bar_height, label='ocn', color=rgb(0, 90, 255))
 
-# average の位置と値を取得
+# average 
 avg_index = df1[df1['model'] == 'mean'].index[0]
 avg_pos = df1.index.get_loc(avg_index)
 avg_atm = df1.loc[avg_index, 'atm']
 avg_ocn = df1.loc[avg_index, 'ocn']
 
-# エラーバー（average を中心に）
+# errorbar
 ax2.errorbar(x=avg_atm, y=avg_pos, xerr=atmstds, fmt='none', color='black', capsize=5)
 ax2.errorbar(x=avg_ocn, y=avg_pos + bar_height, xerr=ocnstds, fmt='none', color='black', capsize=5)
 
-# ===== 左パネル（モデル名を出す軸） =====
-ax2.invert_yaxis()                 # 上から下に
+# 
+ax2.invert_yaxis()                
 ax2.set_yticks(indices) 
 ax2.set_yticklabels(model1)   
 ax2.axvline(0, color='black', linewidth=1.5, linestyle='--')   # モデル名表示
@@ -185,40 +149,39 @@ ax2.tick_params(axis='x', labelsize=30)
 
 
 #=====================
-#(c) の描画
+#(c) 
 #=====================
 
-# 棒グラフ（ocn：上側）
+# （ocn）
 ax3.barh(indices, ocn1, height=bar_height, label='ocn',color=rgb(0,90,255))
 
-# 初期化
-pos_base = np.zeros_like(dicalk1)  # 正方向の積み上げ位置
-neg_base = np.zeros_like(dicalk1)  # 負方向の積み上げ位置
+
+pos_base = np.zeros_like(dicalk1)  
+neg_base = np.zeros_like(dicalk1) 
 
 rgb_255 = (255, 241, 0)
 rgb_normalized = tuple(c / 255 for c in rgb_255)
 
-# データと色をリストで管理
 components = [
     ('DIC,ALK', dicalk1, 'lightcoral'),
     ('SST', sst1, 'lightgreen'),
     ('SSS', sss1, 'mediumslateblue'),
    ]
 
-# 描画
+
 for  label, data, color in components:
 
-    bar_data = np.where(data >= 0, data, 0)  # 正の値
+    bar_data = np.where(data >= 0, data, 0) 
     bar_left = pos_base
     ax3.barh(indices+ bar_height, bar_data, left=bar_left,  color=color, label=label, height=0.4) #height=bar_height
-    pos_base += bar_data  # 正方向に積み上げ
+    pos_base += bar_data  
 
-    bar_data = np.where(data < 0, data, 0)  # 負の値
+    bar_data = np.where(data < 0, data, 0) 
     bar_left = neg_base
     ax3.barh(indices+ bar_height,bar_data, left=bar_left, color=color, height=0.4) #height=bar_height
-    neg_base += bar_data  # 負方向に積み上げ
+    neg_base += bar_data 
 
-# average の位置と値を取得
+# average 
 avg_index = df1[df1['model'] == 'mean'].index[0]
 avg_pos = df1.index.get_loc(avg_index)
 avg_ocn = df1.loc[avg_index, 'ocn']
@@ -227,16 +190,14 @@ avg_T = df1.loc[avg_index, 'sst']
 avg_S = df1.loc[avg_index, 'sss']
 avg_DICALK = df1.loc[avg_index, 'DIC/ALK']
 
-# エラーバー（average を中心に）
+# errorbar
 ax3.errorbar(x=avg_ocn, y=avg_pos, xerr=ocnstds, fmt='none', color='cyan', capsize=5)
 ax3.errorbar(x=avg_DICALK+avg_T, y=avg_pos+0.8*bar_height, xerr=sststds, fmt='none', color='darkgreen', capsize=5)
 ax3.errorbar(x=avg_DICALK+avg_T+avg_S, y=avg_pos+1.2*bar_height, xerr=sssstds, fmt='none', color='blue', capsize=5)
 ax3.errorbar(x=avg_DICALK , y=avg_pos+ bar_height, xerr=dicalkstds, fmt='none', color='orangered', capsize=5)
 
-# ===== 中パネル =====
+# 
 ax3.invert_yaxis()
-#ax3.set_yticks(indices)
-#ax3.set_yticklabels([])            # ラベルは消す（位置だけ揃える）
 ax3.axvline(0, color='black', linewidth=1.5, linestyle='--')
 ax3.tick_params(axis='x', labelsize=30)
 ax3.tick_params(axis='y', labelleft=False)
@@ -246,15 +207,15 @@ ax3.set_title("Contribution of Each Processes Across Models", fontsize=36)
 
 
 #=====================
-#(d) の描画
+#(d) 
 #=====================
-# 初期化
-pos_base = np.zeros_like(org1)  # 正方向の積み上げ位置
-neg_base = np.zeros_like(org1)  # 負方向の積み上げ位置
+
+pos_base = np.zeros_like(org1)  
+neg_base = np.zeros_like(org1)  
 
 ax4.barh(indices, dicalk1, height=bar_height, label='DIC/ALK', color='lightcoral')
 
-# データと色をリストで管理
+
 components = [
     #('org', org, tuple(c/ 255 for c in (3, 175, 122))),
     #('caco3', caco3, tuple(c/ 255 for c in (246,170,0))),
@@ -267,20 +228,20 @@ components = [
     ('fw', fw1, tuple(c/ 255 for c in (77, 196, 255))),
     ('inv', avr1, tuple(c/ 255 for c in (255, 241, 0)))
 ]
-# 描画
+
 for label, data, color in components:
-    bar_data = np.where(data >= 0, data, 0)  # 正の値
+    bar_data = np.where(data >= 0, data, 0)  
     bar_left = pos_base
     ax4.barh(indices + bar_height, bar_data, left=bar_left,  color=color, label=label, height=0.4) #height=bar_height
-    pos_base += bar_data  # 正方向に積み上げ
+    pos_base += bar_data  
 
-    bar_data = np.where(data < 0, data, 0)  # 負の値
+    bar_data = np.where(data < 0, data, 0) 
     bar_left = neg_base
     ax4.barh(indices + bar_height, bar_data, left=bar_left, color=color, height=0.4) #height=bar_height
-    neg_base += bar_data  # 負方向に積み上げ
+    neg_base += bar_data  
 
 
-# average の位置と値を取得
+# average 
 avg_index = df1[df1['model'] == 'mean'].index[0]
 avg_pos = df1.index.get_loc(avg_index)
 avg_DA = df1.loc[avg_index, 'DIC/ALK']
@@ -291,7 +252,7 @@ avg_fw = df1.loc[avg_index, 'fw']
 avg_inv = df1.loc[avg_index, 'inv']
 
 
-# エラーバー（average を中心に）
+# errorbar
 ax4.errorbar(x=avg_DA, y=avg_pos, xerr=dicalkstds, fmt='none', color='pink', capsize=5)
 ax4.errorbar(x=avg_org, y=avg_pos+bar_height,xerr=orgstds, fmt='none', color='brown', capsize=5)
 ax4.errorbar(x=avg_caco3 , y=avg_pos+bar_height, xerr=caco3stds, fmt='none', color='green', capsize=5)
@@ -300,17 +261,17 @@ ax4.errorbar(x=avg_org+avg_fw, y=avg_pos+1.6*bar_height, xerr=fwstds, fmt='none'
 ax4.errorbar(x=avg_caco3+avg_gas+avg_inv, y=avg_pos+bar_height, xerr=invstds, fmt='none', color='black', capsize=5)
 
 
-# ===== 右パネル =====
+
 ax4.invert_yaxis()
 #ax4.set_yticks(indices)
 #ax4.set_yticklabels([])           
 ax4.axvline(0, color='black', linewidth=1.5, linestyle='--')
 ax4.tick_params(axis='x', labelsize=30)
-ax4.tick_params(axis='y', labelleft=False)  # ラベルだけ非表示
+ax4.tick_params(axis='y', labelleft=False)  
 
 
-###凡例######################################
-# --- 凡例用のパッチ（色はプロットと合わせる） ---
+#########################################
+
 patch_atm   = Patch(facecolor='red',            label='atm    ')
 patch_ocn   = Patch(facecolor='blue',           label='ocn    ')
 patch_devi  = Patch(facecolor='lightgray',      label='devi   ')
@@ -325,18 +286,6 @@ patch_gas   = Patch(facecolor=(153/255, 0, 153/255),         label='gas')
 patch_fw    = Patch(facecolor=(77/255, 196/255, 255/255),    label='fw')
 patch_inv   = Patch(facecolor=(255/255, 241/255, 0),         label='inv')
 
-# atm（1つだけ）
-#leg1 = ax1.legend(
-#    handles=[patch_atm],
-#    #title="atm",
-#    #loc='upper center',
-#    #bbox_to_anchor=(0.26, 0.975),
-#    ncol=1,
-#    fontsize=18,
-#    title_fontsize=16,
-    #frameon=False
-#)
-#ax.add_artist(leg1)  # 後で別の凡例も置きたいので add_artist
 
 # ocn & devi
 leg2 = ax2.legend(
@@ -348,8 +297,7 @@ leg2 = ax2.legend(
     fontsize=23,
     title_fontsize=20,
     columnspacing=0.05,
-    handlelength=0.5,   # ← 横幅を短くする
-#    handleheight=1.0,   # ← 縦幅のバランス調整（必要なら）
+    handlelength=0.5,  
     #frameon=False
 )
 ax2.add_artist(leg2)
@@ -364,8 +312,8 @@ leg3 = ax3.legend(
     fontsize=23,
     title_fontsize=20,
     columnspacing=0.05,
-    handlelength=0.5,   # ← 横幅を短くする
-#    handleheight=1.0,   # ← 縦幅のバランス調整（必要なら）
+    handlelength=0.5,  
+#    handleheight=1.0,   
     #frameon=False
 )
 ax3.add_artist(leg3)
@@ -380,12 +328,11 @@ leg4 = ax4.legend(
     fontsize=23,
     title_fontsize=20,
     columnspacing=0.1,
-    handlelength=0.5,   # ← 横幅を短くする
-    handleheight=1.0,   # ← 縦幅のバランス調整（必要なら）
+    handlelength=0.5,   
+    handleheight=1.0,   
 
     #frameon=False
 )
-# 最後の legend は add_artist しなくて OK（してもよい）
 
 # 3つのAxesが ax1, ax2, ax3 の場合
 ax2.text(0.1, 0, "(a)", transform=ax2.transAxes,
