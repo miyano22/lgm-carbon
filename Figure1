@@ -4,41 +4,34 @@ import numpy as np
 from matplotlib.patches import Patch
 
 
-#フォント設定
+
 plt.rcParams['font.family'] = 'Times New Roman' # font familyの設定
 #plt.rcParams['mathtext.fontset'] = 'stix' # math fontの設定
-plt.rcParams["font.size"] = 20 # 全体のフォントサイズが変更されます。
-#plt.rcParams['xtick.labelsize'] = 9 # 軸だけ変更されます。                    
-#plt.rcParams['ytick.labelsize'] = 24 # 軸だけ変更されます   
+plt.rcParams["font.size"] = 20 
+#plt.rcParams['xtick.labelsize'] = 9                
+#plt.rcParams['ytick.labelsize'] = 24    
 
-#軸設定                                                                        
-plt.rcParams['xtick.direction'] = 'in' #x軸の目盛りの向き                      
-plt.rcParams['ytick.direction'] = 'in' #y軸の目盛りの向き                      
-#plt.rcParams['axes.grid'] = True # グリッドの作成
+                                                                       
+plt.rcParams['xtick.direction'] = 'in'                       
+plt.rcParams['ytick.direction'] = 'in'                       
+#plt.rcParams['axes.grid'] = True 
 
-
-#plt.rcParams['grid.linestyle']='--' #グリッドの線種
-plt.rcParams["xtick.minor.visible"] = True  #x軸補助目盛りの追
-#plt.rcParams["ytick.minor.visible"] = True  #y軸補助目盛りの追加
-plt.rcParams['xtick.top'] = True  #x軸の上部目盛り
-plt.rcParams['ytick.right'] = True  #y軸の右部目盛り
+plt.rcParams["xtick.minor.visible"] = True  
+plt.rcParams['xtick.top'] = True  
+plt.rcParams['ytick.right'] = True  
 
 
-#凡例設定                                                                      
-plt.rcParams["legend.fancybox"] = False  # 丸角OFF
-plt.rcParams["legend.framealpha"] = 1  # 透明度の指定、0で塗りつぶしなし
-plt.rcParams["legend.edgecolor"] = 'black'  # edgeの色を変更
-plt.rcParams["legend.markerscale"] = 5 #markerサイズの倍率 
+                                                                      
+plt.rcParams["legend.fancybox"] = False  
+plt.rcParams["legend.framealpha"] = 1  
+plt.rcParams["legend.edgecolor"] = 'black'  
+plt.rcParams["legend.markerscale"] = 5 
 
-
-# CSV読み込み
 df = pd.read_excel("Result_fig1.xlsx")
 
-# 除外
 exclude_models = ['kobayashi2021LGMctl', 'Kobayashi2021all','CTL']
 df = df[~df['model'].isin(exclude_models)]
 
-# データ
 models = df['model']
 atm = df['atm']
 ocn = df['ocn']
@@ -53,29 +46,22 @@ gas=df['gas']
 fw=df['fw']
 avr=df['inv']
 
-# 位置をずらすための工夫
+
 #N = len(models)
-#indices = np.arange(N)  # モデルの位置
+#indices = np.arange(N)  
 bar_height = 0.4
 
-# 横棒の位置（1本だけなので index=0 に設定）
+
 index = np.array([0])
 fig, ax = plt.subplots(figsize=(10, 6))
-#fig.subplots_adjust(right=0.6)  # 右側に20%の余白を追加
 
-# 13番目のインデックス
 i = 13
 atm_val = atm[i]
 
 ax.barh(index- 3*bar_height, atm_val, color='red', label='atm', height=0.2)
 
-
-# 正負積み上げ用
 pos_base = np.zeros_like(ocn)
 neg_base = np.zeros_like(ocn)
-
-
-
 
 
 ocn_val = ocn[i]
@@ -88,19 +74,19 @@ components1 = [
 
 for  label, data, color in components1:
 
-    bar_data = np.where(data >= 0, data, 0)  # 正の値
+    bar_data = np.where(data >= 0, data, 0) 
     bar_left = pos_base
     ax.barh(index- 2*bar_height, bar_data, left=bar_left,  color=color, label=label, height=0.2) #height=bar_height
-    pos_base += bar_data  # 正方向に積み上げ
+    pos_base += bar_data  
 
-    bar_data = np.where(data < 0, data, 0)  # 負の値
+    bar_data = np.where(data < 0, data, 0)  
     bar_left = neg_base
     ax.barh(index- 2*bar_height,bar_data, left=bar_left, color=color, height=0.2) #height=bar_height
-    neg_base += bar_data  # 負方向に積み上げ
+    neg_base += bar_data  
 
 
 
-# 正負積み上げ用
+
 pos_base = np.zeros_like(dicalk)
 neg_base = np.zeros_like(dicalk)
 
@@ -109,7 +95,7 @@ dicalk_val = dicalk[i]
 sstsss_val = sstsss[i]
 sst_val = sst[i]
 sss_val = sss[i]
-## DIC/ALK,SST/SSSの描画
+
 
 components2 = [
     ('dic/alk', dicalk_val, 'lightcoral'),
@@ -120,35 +106,32 @@ components2 = [
 
 for  label, data, color in components2:
 
-    bar_data = np.where(data >= 0, data, 0)  # 正の値
+    bar_data = np.where(data >= 0, data, 0)  
     bar_left = pos_base
     ax.barh(index- bar_height, bar_data, left=bar_left,  color=color, label=label, height=0.2) #height=bar_height
-    pos_base += bar_data  # 正方向に積み上げ
+    pos_base += bar_data  
 
-    bar_data = np.where(data < 0, data, 0)  # 負の値
+    bar_data = np.where(data < 0, data, 0) 
     bar_left = neg_base
     ax.barh(index- bar_height,bar_data, left=bar_left, color=color,  height=0.2) #height=bar_height
-    neg_base += bar_data  # 負方向に積み上げ
+    neg_base += bar_data  
 
 
-# 初期化
-pos_base = np.zeros_like(org)  # 正方向の積み上げ位置
-neg_base = np.zeros_like(org)  # 負方向の積み上げ位置
+
+pos_base = np.zeros_like(org)  
+neg_base = np.zeros_like(org)  
 
 
-# 13番目のインデックス
+
 i = 13
 
-# 13番目の値だけを抽出
+
 org_val   = org[i]
 caco3_val = caco3[i]
 gas_val   = gas[i]
 fw_val    = fw[i]
 avr_val   = avr[i]
 
-
-
-# 順番と色
 components3 = [
     ('org', org_val, (246/255, 170/255, 0)),
     ('caco3', caco3_val, (3/255, 175/255, 122/255)),
@@ -157,7 +140,7 @@ components3 = [
     ('inv', avr_val, (255/255, 241/255, 0))
 ]
 
-# 積み上げ描画
+
 for label, val, color in components3:
     print(label, val, type(val))
     if val >= 0:
@@ -167,8 +150,6 @@ for label, val, color in components3:
         ax.barh(index, val, left=neg_base, color=color, label=label, height=0.2)
         neg_base += val
 
-
-##点線を引く
 ax.plot(
     [atm_val, ocn_val+devi_val],
     [index-bar_height,index-bar_height ],
@@ -200,13 +181,12 @@ ax.plot(
     color="gray", linestyle="--", linewidth=1.5
 )
 
-# 軸ラベル設定
+
 com4_pos = 0
 com1_pos = com4_pos - 3*bar_height
 com2_pos = com4_pos - 2*bar_height
 com3_pos = com4_pos - bar_height
 
-#エラーバーをつける
 
 exclude_models2 = ['CTL','average']
 df2 = df[~df['model'].isin(exclude_models2)]
@@ -302,10 +282,10 @@ leg1 = ax.legend(
     fontsize=18,
     title_fontsize=16,
     #frameon=False
-#    handlelength=0.5,   # ← 横幅を短くする                                    
-#    handleheight=1.0,   # ← 縦幅のバランス調整（必要なら）  
+#    handlelength=0.5,                            
+#    handleheight=1.0,  
 )
-ax.add_artist(leg1)  # 後で別の凡例も置きたいので add_artist
+ax.add_artist(leg1) 
 
 # ocn & devi
 leg2 = ax.legend(
@@ -351,7 +331,7 @@ leg4 = ax.legend(
 #    handlelength=0.5,
 #    handleheight=1.0,
 )
-# 最後の legend は add_artist しなくて OK（してもよい）
+
 
 
 
