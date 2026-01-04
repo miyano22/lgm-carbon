@@ -5,8 +5,8 @@ from matplotlib.patches import Patch
 
 
 
-plt.rcParams['font.family'] = 'Times New Roman' # font familyの設定
-#plt.rcParams['mathtext.fontset'] = 'stix' # math fontの設定
+plt.rcParams['font.family'] = 'Times New Roman' 
+#plt.rcParams['mathtext.fontset'] = 'stix' 
 plt.rcParams["font.size"] = 20 
 #plt.rcParams['xtick.labelsize'] = 9                
 #plt.rcParams['ytick.labelsize'] = 24    
